@@ -1,8 +1,14 @@
 *
 
 !.gitignore
+!.gitkeep
+
 !*.md
 !*.c
 !*.asm
 !*.sh
 !makefile
+
+!/asm
+!/c
+

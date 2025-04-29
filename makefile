@@ -1,32 +1,33 @@
-# ---------------------------------------
-# 変数定義
+# ----------------- 変数定義 -----------------
 NASM      ?= nasm
 NASMFLAGS ?= -felf64
-LD        ?= ld
+
+CC        ?= gcc
+CFLAGS    ?= -std=c11 -O2 -Wall -Wextra
 LDFLAGS   ?=
 
-# 規定ターゲット（hello をビルド）
-.DEFAULT_GOAL := hello
+.DEFAULT_GOAL := hello      # 既定ターゲット
 
-# ターゲットを指定することもできる(e.g. make foo)
-
-# --- 汎用ルール ---------------------------------
+# ------------- パターンルール --------------
 # 1. foo.asm → foo.o
 %.o: %.asm
 	$(NASM) $(NASMFLAGS) $< -o $@
 
-# 2. foo.o → foo (実行ファイル)
+# 2. foo.c   → foo.o
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# 3. *.o → 実行ファイル (stem と同名)
+#    $^ = すべての依存オブジェクト
 %: %.o
-	$(LD) $(LDFLAGS) -o $@ $<
+	$(CC) $(LDFLAGS) $^ -o $@
 	chmod u+x $@
 
-# --- 実行ターゲット ------------------------------
-#   $ make run BIN=hello
+# --------- 実行・クリーンターゲット --------
 .PHONY: run
 run:
 	./$(BIN)
 
-# --- クリーン ------------------------------------
 .PHONY: clean
 clean:
-	$(RM) *.o hello
+	$(RM) *.o
